@@ -1,0 +1,316 @@
+/* Estilos personalizados para o chat */
+
+.chat-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px; /* Adiciona espaçamento nas bordas da tela */
+    box-sizing: border-box; /* Inclui padding no cálculo do tamanho */
+  }
+  
+  .sidebar {
+    width: 280px;
+    background-color: #1a202c; /* Barra lateral mais escura */
+    color: white;
+    border-radius: 8px;
+    margin-right: 20px; /* Adiciona um espaçamento entre a barra e o chat */
+    padding: 20px;
+  }
+  
+  .conversas-list {
+    max-height: 90%;
+    overflow-y: auto;
+  }
+  
+  .conversa-item {
+    padding: 12px;
+    cursor: pointer;
+    border-radius: 8px; /* Borda arredondada nas opções */
+  }
+  
+  .conversa-item:hover {
+    background-color: #2d3748; /* Efeito de hover */
+  }
+  
+  .chat-box {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #f7fafc; /* Fundo claro para a área de chat */
+    border-radius: 8px;
+    padding: 20px; /* Adiciona padding interno no chat */
+    box-sizing: border-box;
+    max-width: 80%; /* Garante que o chat ocupe o espaço restante */
+  }
+  
+  .messages-box {
+    flex-grow: 1; /* Garante que as mensagens ocupem o máximo de espaço possível */
+    overflow-y: auto;
+    margin-bottom: 20px; /* Espaço entre as mensagens e a área de digitação */
+  }
+  
+  .message-box {
+    background-color: #e2e8f0; /* Caixa de mensagens */
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    max-width: 70%; /* Limita a largura das mensagens */
+  }
+  
+  .message-box .author {
+    font-weight: bold;
+    font-size: 14px;
+    color: #4a5568; /* Cor mais suave para o nome */
+  }
+  
+  .message-box .content {
+    margin-top: 4px;
+    font-size: 16px;
+    color: #2d3748; /* Cor mais escura para o conteúdo */
+  }
+  
+  form {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Adiciona espaçamento entre o campo de texto e o botão */
+  }
+  
+  input {
+    flex-grow: 1; /* Campo de texto ocupa o máximo de espaço */
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  input:focus {
+    border-color: #3182ce; /* Destaca o campo de texto quando focado */
+  }
+  
+  button {
+    background-color: #3182ce;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+  }
+  
+  button:hover {
+    background-color: #2b6cb0;
+  }
+  
+  button:disabled {
+    background-color: #e2e8f0;
+    cursor: not-allowed;
+  }
+  
+  button:disabled:hover {
+    background-color: #e2e8f0;
+  }
+  
+  @media (max-width: 768px) {
+    .chat-container {
+      flex-direction: column; /* Layout empilhado em telas menores */
+      padding: 10px;
+    }
+  
+    .sidebar {
+      width: 100%;
+      margin-right: 0;
+      margin-bottom: 20px; /* Espaçamento entre barra lateral e chat em telas menores */
+    }
+  
+    .chat-box {
+      width: 100%;
+      margin-top: 20px; /* Espaço entre o sidebar e o chat */
+    }
+  
+    .message-box {
+      max-width: 90%; /* Ajusta a largura das mensagens para telas menores */
+    }
+  }
+  
+.message-container {
+  display: flex;
+  width: 100%;
+}
+
+.message-box {
+    max-width: 60%;
+    word-wrap: break-word;
+    padding: 12px;
+    border-radius: 8px;
+    margin: 5px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Mensagens enviadas pelo usuário (lado direito, azul) */
+.sent {
+    background-color: #007bff;
+    color: white;
+    text-align: left;
+    border-bottom-right-radius: 0;
+    align-self: flex-end;
+}
+
+/* Mensagens recebidas (lado esquerdo, cinza) */
+.received {
+    background-color: #e2e8f0;
+    color: black;
+    text-align: left;
+    border-bottom-left-radius: 0;
+    align-self: flex-start;
+}
+
+/* Ajusta alinhamento para mensagens */
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+/* Botão flutuante */
+.action-menu {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+}
+
+.action-button {
+  background-color: #3182ce;
+  color: white;
+  font-size: 20px;
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.action-options {
+  position: absolute;
+  bottom: 60px;
+  right: 0;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.action-options button {
+  display: block;
+  color: black;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.action-options button:hover {
+  background-color: #f0f0f0;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* 🔴 Botão de logout */
+.logout-container {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  z-index: 100;
+}
+
+.logout-button {
+  background-color: #dc2626; /* Vermelho */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #b91c1c; /* Vermelho escuro no hover */
+  transform: scale(1.05); /* Pequeno efeito de zoom */
+}
+
+.logout-button:active {
+  transform: scale(0.95);
+}
+
+.header-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  background: #f5f5f5;
+}
+
+.dashboard-button {
+  background: #4CAF50;
+  color: white;
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dashboard-button:hover {
+  background: #45a049;
+}
+
+.logout-button {
+  background: #d9534f;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.logout-button:hover {
+  background: #c9302c;
+}
+
+.reduced-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.input-hidden{
+  height:0;
+  width:0;
+  visibility: hidden;
+  padding:0;
+  margin:0;
+  float:right;
+}
