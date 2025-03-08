@@ -166,17 +166,17 @@ const handleRedirect = async () => {
     const interval = setInterval(async () => {
         try {
             const res = await api.get(`/atendimentos/${selectedAtendimento._id}/mensagens`);
+            
+            // 📌 Remover mensagens duplicadas
+            const mensagensUnicas = res.data.filter(
+                (msg) => !mensagens.some((prevMsg) => prevMsg._id === msg._id)
+            );
 
-            // 🔥 Evita duplicação verificando se a mensagem já existe no estado
-            setMensagens((prevMensagens) => {
-                const novasMensagens = res.data.filter(
-                    (msg) => !prevMensagens.some((prevMsg) => prevMsg._id === msg._id)
-                );
-                return [...prevMensagens, ...novasMensagens];
-            });
-
-            if (isAtBottomRef.current) {
-                scrollToBottom();
+            if (mensagensUnicas.length > 0) {
+                setMensagens((prevMensagens) => [...prevMensagens, ...mensagensUnicas]);
+                if (isAtBottomRef.current) {
+                    scrollToBottom();
+                }
             }
         } catch (err) {
             console.error('❌ Erro ao buscar novas mensagens:', err);
@@ -184,7 +184,8 @@ const handleRedirect = async () => {
     }, 3000);
 
     return () => clearInterval(interval);
-}, [selectedAtendimento]);
+}, [selectedAtendimento, mensagens]);
+
 
 
   // ✅ Enviar mensagem ou arquivo
@@ -287,13 +288,17 @@ const handleRedirect = async () => {
                       {/* 📩 Exibir mensagens de texto */}
                       {msg.text && <p className="content mt-1">{msg.text}</p>}
 
-                      {/* 🖼️ Exibir imagem reduzida */}
+                      {/* 🖼️ Exibir imagem corretamente */}
                       {msg.mediaType === "image" && msg.mediaUrl && (
-                        <img src={msg.mediaUrl} alt="Imagem recebida" className="reduced-image" />
- 
+                        <img 
+                          src={msg.mediaUrl} 
+                          alt="Imagem recebida" 
+                          className="reduced-image"                          
+                          onClick={() => window.open(msg.mediaUrl, "_blank")} // 🔥 Abre a imagem em nova aba ao clicar
+                        />
                       )}
 
-                      {/* 🎵 Exibir áudio recebido */}
+                      {/* 🎵 Exibir áudio corretamente */}
                       {msg.mediaType === "audio" && msg.mediaUrl && (
                         <audio controls className="mt-2">
                           <source src={msg.mediaUrl} type="audio/ogg" />
@@ -301,9 +306,14 @@ const handleRedirect = async () => {
                         </audio>
                       )}
 
-                      {/* 📄 Exibir documento recebido */}
+                      {/* 📄 Exibir documento corretamente */}
                       {msg.mediaType === "document" && msg.mediaUrl && (
-                        <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-blue-500 underline">
+                        <a 
+                          href={msg.mediaUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer" 
+                          className="mt-2 text-blue-500 underline"
+                        >
                           📄 Baixar Documento
                         </a>
                       )}
@@ -312,7 +322,6 @@ const handleRedirect = async () => {
                 ))
               )}
             </div>
-
 
             {/* 🔹 Formulário de Envio */}
             <form onSubmit={enviarMensagem} className="mt-4 flex">
