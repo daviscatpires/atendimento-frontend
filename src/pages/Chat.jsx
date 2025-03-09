@@ -188,29 +188,32 @@ const handleRedirect = async () => {
 
 
 
-  // ✅ Enviar mensagem ou arquivo
-  const enviarMensagem = async (e) => {
-    e.preventDefault();
-    if (!selectedAtendimento || (!mensagem.trim() && !arquivo)) return;
+// ✅ Enviar mensagem ou arquivo
+const enviarMensagem = async (e) => {
+  e.preventDefault();
+  if (!selectedAtendimento || (!mensagem.trim() && !arquivo)) return;
 
-    try {
-        const formData = new FormData();
-        if (mensagem.trim()) formData.append("conteudo", mensagem);
-        if (arquivo) formData.append("arquivo", arquivo);
+  try {
+      const formData = new FormData();
+      if (mensagem.trim()) formData.append("conteudo", mensagem);
+      if (arquivo) formData.append("arquivo", arquivo);
 
-        setSending(true);
-        await api.post(`/atendimentos/${selectedAtendimento._id}/enviar`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
+      setSending(true);
+      const response = await api.post(`/atendimentos/${selectedAtendimento._id}/enviar`, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+      });
 
-        setMensagem('');
-        setArquivo(null);
-        setSending(false);
-        scrollToBottom();
-    } catch (err) {
-        console.error('❌ Erro ao enviar mensagem:', err);
-        setSending(false);
-    }
+      // Atualiza as mensagens na interface após o envio
+      setMensagens((prevMensagens) => [...prevMensagens, response.data.message]);
+
+      setMensagem('');
+      setArquivo(null);
+      setSending(false);
+      scrollToBottom();
+  } catch (err) {
+      console.error('❌ Erro ao enviar mensagem:', err);
+      setSending(false);
+  }
 };
 
 
@@ -275,75 +278,63 @@ const handleRedirect = async () => {
             <h2 className="text-xl font-bold mb-4">{selectedAtendimento.cliente.nome}</h2>
             
             <div ref={messagesBoxRef} className="messages-box flex-1 overflow-y-auto">
-              {mensagens.length === 0 ? (
-                <p className="text-center text-gray-500">Sem mensagens</p>
-              ) : (
-                mensagens.map((msg) => (
-                  <div key={msg._id} className={`message-container flex ${msg.from === selectedAtendimento.cliente.telefone ? 'justify-start' : 'justify-end'}`}>
-                    <div className={`message-box p-3 rounded-lg max-w-[70%] ${msg.from === selectedAtendimento.cliente.telefone ? 'received' : 'sent'}`}>
-                      <p className="text-sm font-semibold">
-                        {msg.from === selectedAtendimento.cliente.telefone ? selectedAtendimento.cliente.nome : "Você"}
-                      </p>
+            {mensagens.map((msg) => (
+              <div key={msg._id} className={`message-container flex ${msg.from === selectedAtendimento.cliente.telefone ? 'justify-start' : 'justify-end'}`}>
+                <div className={`message-box p-3 rounded-lg max-w-[70%] ${msg.from === selectedAtendimento.cliente.telefone ? 'received' : 'sent'}`}>
+                  <p className="text-sm font-semibold">
+                    {msg.from === selectedAtendimento.cliente.telefone ? selectedAtendimento.cliente.nome : "Você"}
+                  </p>
 
-                      {/* 📩 Exibir mensagens de texto */}
-                      {msg.text && <p className="content mt-1">{msg.text}</p>}
+                  {/* 📩 Exibir mensagens de texto */}
+                  {msg.text && <p className="content mt-1">{msg.text}</p>}
 
-                      {/* 🖼️ Exibir imagem corretamente */}
-                      {msg.mediaType === "image" && msg.mediaUrl && (
-                        <img 
-                          src={msg.mediaUrl} 
-                          alt="Imagem recebida" 
-                          className="reduced-image"                          
-                          onClick={() => window.open(msg.mediaUrl, "_blank")} // 🔥 Abre a imagem em nova aba ao clicar
-                        />
-                      )}
+                  {/* 🖼️ Exibir imagem reduzida */}
+                  {msg.mediaType === "image" && msg.mediaUrl && (
+                    <img src={msg.mediaUrl} alt="Imagem recebida" className="reduced-image" />
+                  )}
 
-                      {/* 🎵 Exibir áudio corretamente */}
-                      {msg.mediaType === "audio" && msg.mediaUrl && (
-                        <audio controls className="mt-2">
-                          <source src={msg.mediaUrl} type="audio/ogg" />
-                          Seu navegador não suporta áudio.
-                        </audio>
-                      )}
+                  {/* 🎵 Exibir áudio recebido */}
+                  {msg.mediaType === "audio" && msg.mediaUrl && (
+                    <audio controls className="mt-2">
+                      <source src={msg.mediaUrl} type="audio/ogg" />
+                      Seu navegador não suporta áudio.
+                    </audio>
+                  )}
 
-                      {/* 📄 Exibir documento corretamente */}
-                      {msg.mediaType === "document" && msg.mediaUrl && (
-                        <a 
-                          href={msg.mediaUrl} 
-                          target="_blank" 
-                          rel="noopener noreferrer" 
-                          className="mt-2 text-blue-500 underline"
-                        >
-                          📄 Baixar Documento
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+                  {/* 📄 Exibir documento recebido */}
+                  {msg.mediaType === "document" && msg.mediaUrl && (
+                    <a href={msg.mediaUrl} target="_blank" rel="noopener noreferrer" className="mt-2 text-blue-500 underline">
+                      📄 Baixar Documento
+                    </a>
+                  )}
+
+
+                </div>
+              </div>
+            ))}
             </div>
 
             {/* 🔹 Formulário de Envio */}
             <form onSubmit={enviarMensagem} className="mt-4 flex">
-              <input 
-                type="text" 
-                className="w-full p-2 border rounded-l-md" 
-                placeholder="Digite sua mensagem" 
-                value={mensagem} 
-                onChange={(e) => setMensagem(e.target.value)} 
-              />
+                <input 
+                    type="text" 
+                    className="w-full p-2 border rounded-l-md" 
+                    placeholder="Digite sua mensagem" 
+                    value={mensagem} 
+                    onChange={(e) => setMensagem(e.target.value)} 
+                />
 
-              <input 
-                type="file" 
-                onChange={(e) => setArquivo(e.target.files[0])}  
-                className="hidden"
-                id="file-upload"
-              />
-              <label htmlFor="file-upload" className="btn p-2 bg-gray-300 cursor-pointer">📎</label>
+                <input 
+                    type="file" 
+                    onChange={(e) => setArquivo(e.target.files[0])}  
+                    className="hidden"
+                    id="file-upload"
+                />
+                <label htmlFor="file-upload" className="btn p-2 bg-gray-300 cursor-pointer">📎</label>
 
-              <button type="submit" className="btn p-2 bg-blue-500 text-white rounded-r-md">
-                {sending ? "Enviando..." : "Enviar"}
-              </button>
+                <button type="submit" className="btn p-2 bg-blue-500 text-white rounded-r-md">
+                    {sending ? "Enviando..." : "Enviar"}
+                </button>
             </form>
 
             {/* Botão flutuante de ações */}
