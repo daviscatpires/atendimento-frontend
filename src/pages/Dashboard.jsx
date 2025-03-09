@@ -6,7 +6,17 @@ import api from '../../api';
 const Dashboard = () => {
 
  // Estados corrigidos
- const [dados, setDados] = useState(null);
+ const [dados, setDados] = useState({
+  atendimentosAbertos: { hoje: 0, seteDias: 0, trintaDias: 0 },
+  atendimentosFinalizados: { hoje: 0, seteDias: 0, trintaDias: 0 },
+  atendimentosPorUsuario: [],
+  atendimentosUltimos3Meses: [],
+  setoresMaisSolicitados: [],
+  tempoMedioAtendimento: { hoje: "0.0", seteDias: "0.0", trintaDias: "0.0" },
+  avaliacaoBot: { meses: [{ mes: "Sem Dados", valor: 0 }] },
+  avaliacaoPorUsuario: [],
+  retencaoClientes: "0.0"
+});
  const [loading, setLoading] = useState(true);
  const [error, setError] = useState(null);
 
@@ -30,13 +40,6 @@ const Dashboard = () => {
  if (loading) return <p className="loading-text">Carregando dados...</p>;
  if (error) return <p className="error-text">{error}</p>;
  if (!dados) return <p className="error-text">Nenhum dado disponível.</p>;
- 
-
-  // Função para calcular porcentagem dos atendimentos por setor
-  const calcularPercentual = (setorTotal) => {
-    return Number(((setorTotal / (dados.totalAtendimentos || 1)) * 100).toFixed(1));
-  };
-
 
   // Cálculo do crescimento dos atendimentos
   const calcularCrescimento = () => {
@@ -70,15 +73,18 @@ const Dashboard = () => {
       ))}
     </div>
   );
-  
-  // const calcularCrescimento = () => {
-  //   const meses = dados.atendimentosUltimos3Meses;
-  //   if (meses.length < 3) return "N/A";
-  //   const penultimo = meses[1].total;
-  //   const ultimo = meses[2].total;
-  //   const crescimento = ((ultimo - penultimo) / penultimo) * 100;
-  //   return `${crescimento.toFixed(1)}%`;
-  // };
+
+  const setores = dados?.setoresMaisSolicitados?.length 
+    ? dados.setoresMaisSolicitados 
+    : [{ setor: "Nenhum dado", total: 0 }];
+
+  const atendimentos3Meses = dados?.atendimentosUltimos3Meses?.length 
+    ? dados.atendimentosUltimos3Meses 
+    : [{ mes: "Sem Dados", total: 0 }];
+
+  const atendimentosAbertos = dados?.atendimentosAbertos || { hoje: 0, seteDias: 0, trintaDias: 0 };
+  const atendimentosFinalizados = dados?.atendimentosFinalizados || { hoje: 0, seteDias: 0, trintaDias: 0 };
+    
 
   return (
     <div className="dashboard-container">
@@ -93,23 +99,23 @@ const Dashboard = () => {
         {/* Atendimentos por usuário (TOP 3) */}
         <div className="card">
           <h3 className="card-title">👥 Top 3 Atendimentos por Usuário</h3>
-          {dados.atendimentosPorUsuario
-            .sort((a, b) => b.trintaDias - a.trintaDias) // Ordena do maior para o menor
-            .slice(0, 2) // Pega apenas os 3 primeiros
-            .map((usuario, index) => (
-              <div key={index} className="user-card">
-                <p className="user-name"><strong>{usuario.nome}</strong></p>
-                <div className="user-details">
-                  <p>📅 Hoje: {usuario.hoje}</p>
-                  <p>🗓 Semana: {usuario.seteDias}</p>
-                  <p>📆 Mês: {usuario.trintaDias}</p>
-                </div>
-                <div className="user-name">
-                  <p>📆 Avaliação: {usuario.trintaDias}</p>
-                  <p>📆 Tempo médio: {usuario.trintaDias} minutos</p>
-                </div>
+          {(dados?.atendimentosPorUsuario?.length ? dados.atendimentosPorUsuario : [{ nome: "Nenhum dado", hoje: 0, seteDias: 0, trintaDias: 0, tempoMedio: "N/A", avaliacao: "N/A" }])
+          .sort((a, b) => b.trintaDias - a.trintaDias)
+          .slice(0, 3)
+          .map((usuario, index) => (
+            <div key={index} className="user-card">
+              <p className="user-name"><strong>{usuario.atendente ?? "Desconhecido"}</strong></p>
+              <div className="user-details">
+                <p>📅 Hoje: {usuario.hoje ?? 0}</p>
+                <p>🗓 Semana: {usuario.seteDias ?? 0}</p>
+                <p>📆 Mês: {usuario.totalAtendimentos ?? 0}</p>
               </div>
-            ))}
+              <div className="user-name">
+                <p>📆 Avaliação: {usuario.avaliacao ?? "N/A"}</p>
+                <p>📆 Tempo médio: {usuario.tempoMedio ?? "N/A"} minutos</p>
+              </div>
+            </div>
+          ))}
         </div>
 
 
@@ -118,9 +124,9 @@ const Dashboard = () => {
           <h3 className="card-title">📌 Atendimentos Finalizados vs Abertos</h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={[
-              { name: "Hoje", finalizados: dados.atendimentosFinalizados.hoje, abertos: dados.atendimentosAbertos.hoje },
-              { name: "Últimos 7 Dias", finalizados: dados.atendimentosFinalizados.seteDias, abertos: dados.atendimentosAbertos.seteDias },
-              { name: "Últimos 30 Dias", finalizados: dados.atendimentosFinalizados.trintaDias, abertos: dados.atendimentosAbertos.trintaDias }
+              { name: "Hoje", finalizados: atendimentosFinalizados.hoje, abertos: atendimentosAbertos.hoje },
+              { name: "Últimos 7 Dias", finalizados: atendimentosFinalizados.seteDias, abertos: atendimentosAbertos.seteDias },
+              { name: "Últimos 30 Dias", finalizados: atendimentosFinalizados.trintaDias, abertos: atendimentosAbertos.trintaDias }
             ]}>
               <XAxis dataKey="name" />
               <YAxis />
@@ -129,14 +135,14 @@ const Dashboard = () => {
               <Bar dataKey="abertos" fill="#F44336" name="Abertos" />
             </BarChart>
           </ResponsiveContainer>
-          <p>📆 Hoje: {dados.atendimentosAbertos.hoje} em aberto</p>
-          <p>📅 Últimos 7 Dias: {dados.atendimentosAbertos.seteDias} em aberto</p>
-          <p>📅 Últimos 30 Dias: {dados.atendimentosAbertos.trintaDias} em aberto</p>
+          <p>📆 Hoje: {dados?.atendimentosAbertos?.hoje ?? 0} em aberto</p>
+          <p>📅 Últimos 7 Dias: {dados?.atendimentosAbertos?.seteDias ?? 0} em aberto</p>
+          <p>📅 Últimos 30 Dias: {dados?.atendimentosAbertos?.trintaDias ?? 0} em aberto</p>
 
         </div>
 
         {/* 📭 Conversas Não Respondidas */}
-        <div className="card">
+        {/* <div className="card">
           <h3 className="card-title">📭 Conversas Não Respondidas</h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
@@ -164,10 +170,10 @@ const Dashboard = () => {
               { color: "#36A2EB", label: "Respondidas" }
             ]}
           />
-          <p>📆 Hoje: {dados.conversasRecebidas - dados.conversasRespondidas.hoje} conversas não respondidas</p>
-          <p>📅 Últimos 7 Dias: {dados.conversasRecebidas - dados.conversasRespondidas.seteDias}</p>
-          <p>📅 Últimos 30 Dias: {dados.conversasRecebidas - dados.conversasRespondidas.trintaDias}</p>
-        </div>
+          <p>📆 Hoje: {(dados?.conversasRecebidas ?? 0) - (dados?.conversasRespondidas?.hoje ?? 0)} conversas não respondidas</p>
+          <p>📅 Últimos 7 Dias: {(dados?.conversasRecebidas ?? 0) - (dados?.conversasRespondidas?.seteDias ?? 0)}</p>
+          <p>📅 Últimos 30 Dias: {(dados?.conversasRecebidas ?? 0) - (dados?.conversasRespondidas?.trintaDias ?? 0)}</p>
+        </div> */}
 
 
         {/* Retenção de Cliente */}
@@ -194,8 +200,8 @@ const Dashboard = () => {
         <div className="card">
           <h3 className="card-title">📊 Comparação dos Últimos 3 Meses</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={dados.atendimentosUltimos3Meses}>
-              <XAxis dataKey="mes" />
+            <BarChart data={atendimentos3Meses}>
+            <XAxis dataKey="mes" />
               <YAxis />
               <Tooltip />
               <Bar dataKey="total" fill="#36A2EB" barSize={50} />
@@ -208,7 +214,7 @@ const Dashboard = () => {
       <div className="card">
         <h3 className="card-title">🏢 Setores Mais Solicitados</h3>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={dados.setoresMaisSolicitados}>
+          <BarChart data={setores}>
             <XAxis dataKey="setor" />
             <YAxis />
             <Tooltip />
@@ -222,7 +228,7 @@ const Dashboard = () => {
         <div className="card">
           <h3 className="card-title">🤖 Avaliação do Bot</h3>
           <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={dados.avaliacaoBot.meses}>
+            <LineChart data={dados?.avaliacaoBot?.meses?.length ? dados.avaliacaoBot.meses : [{ mes: "Sem Dados", valor: 0 }]}>
               <XAxis dataKey="mes" />
               <YAxis domain={[3.5, 5]} />
               <Tooltip />
@@ -247,9 +253,10 @@ const Dashboard = () => {
         {/* Tempo médio de atendimento */}
         <div className="card">
           <h3 className="card-title">⏳ Tempo Médio de Atendimento</h3>
-          <p className="card-value">Hoje: {dados.tempoMedioAtendimento.hoje} min</p>
-          <p className="card-value">Últimos 7 Dias: {dados.tempoMedioAtendimento.seteDias} min</p>
-          <p className="card-value">Últimos 30 Dias: {dados.tempoMedioAtendimento.trintaDias} min</p>          <ResponsiveContainer width="100%" height={250}>
+          <p className="card-value">Hoje: {dados?.tempoMedioAtendimento?.hoje ?? "0.0"} min</p>
+          <p className="card-value">Últimos 7 Dias: {dados?.tempoMedioAtendimento?.seteDias ?? "0.0"} min</p>
+          <p className="card-value">Últimos 30 Dias: {dados?.tempoMedioAtendimento?.trintaDias ?? "0.0"} min</p>
+          <ResponsiveContainer width="100%" height={250}>
               <LineChart data={dados?.tempoMedioAtendimento?.meses?.length ? dados.tempoMedioAtendimento.meses : [{ mes: "Sem Dados", valor: 0 }]}>              
               <XAxis dataKey="mes" />
               <YAxis />
