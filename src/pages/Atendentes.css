@@ -1,0 +1,103 @@
+/* Estilização geral da página */
+.atendentes-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  /* Título da página */
+  .atendentes-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Lista de atendentes */
+  .atendentes-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    padding: 10px;
+  }
+  
+  /* Cartão de cada atendente */
+  .atendente-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .atendente-card:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Nome do atendente */
+  .atendente-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin-bottom: 5px;
+  }
+  
+  /* Empresa e setor */
+  .atendente-info {
+    font-size: 14px;
+    color: #555;
+    font-style: italic;
+  }
+  
+  /* Detalhes do atendente */
+  .atendente-details {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin-top: 10px;
+  }
+  
+  /* Estilização para mensagens de erro ou carregamento */
+  .loading-text,
+  .error-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #e74c3c;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  /* 🔴 Botão de logout */
+.logout-container {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    z-index: 100;
+  }
+  
+  .logout-button {
+    background-color: #dc2626; /* Vermelho */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: #b91c1c; /* Vermelho escuro no hover */
+    transform: scale(1.05); /* Pequeno efeito de zoom */
+  }
+  
+  .logout-button:active {
+    transform: scale(0.95);
+  }
+  

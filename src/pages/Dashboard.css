@@ -190,4 +190,93 @@
     font-weight: bold;
     color: #333;
   }
-  
+  /* 🔹 Container de atendimentos abertos */
+.open-appointments-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* 🔹 Card de atendimento aberto */
+.open-appointment-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #333;
+  transition: all 0.2s ease-in-out;
+}
+
+.open-appointment-card:hover {
+  background: #e2e6ea;
+  border-color: #bbb;
+}
+
+/* 🔹 Informações do atendimento */
+.appointment-info {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 🔹 Botão para responder */
+.open-appointment-button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.open-appointment-button:hover {
+  background: #0056b3;
+}
+
+/* 🔹 Nenhum atendimento aberto */
+.no-open-appointments {
+  text-align: center;
+  font-weight: bold;
+  color: #888;
+  margin-top: 10px;
+}
+
+.view-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.view-more-button {
+  background-color: #36A2EB;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s ease-in-out;
+}
+
+.view-more-button:hover {
+  background-color: #2581C4;
+}
+
+.sector-list {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.sector-item {
+  padding: 5px 0;
+  font-weight: 500;
+  color: #333;
+}

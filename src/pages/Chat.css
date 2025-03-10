@@ -314,3 +314,95 @@
   margin:0;
   float:right;
 }
+
+.hidden {
+  height:0%;
+  width:0%;
+  visibility: hidden;
+  padding:0;
+  margin:0;
+  float:right;
+}
+
+.message-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Garante que os elementos fiquem distribuídos */
+  flex-direction: row;
+  gap: 8px;
+  padding: 10px;
+  background: #ffffff;
+  border-top: 1px solid #ddd;
+  border-radius: 8px;
+  position: relative;
+}
+
+/* 🔹 Campo de entrada ocupa o espaço disponível */
+.message-form input[type="text"] {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  outline: none;
+  background: #f9f9f9;
+  transition: border-color 0.3s ease-in-out;
+  width: 100%;
+}
+
+/* 📎 Botão de anexo */
+.message-form label {
+  background-color: #e2e8f0;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease-in-out;
+  width: 45px;
+  height: 45px;
+}
+
+.message-form label:hover {
+  background-color: #d1d5db;
+}
+
+/* 🚀 Botão de envio */
+.message-form button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s ease-in-out;
+  width: 70px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.message-form button[type="submit"]:hover {
+  background-color: #0056b3;
+}
+
+/* 📱 Responsividade */
+@media (max-width: 768px) {
+  .message-form {
+      padding: 6px;
+      gap: 6px;
+  }
+
+  .message-form input[type="text"] {
+      font-size: 14px;
+  }
+
+  .message-form label,
+  .message-form button[type="submit"] {
+      width: 40px;
+      height: 40px;
+  }
+}

@@ -315,7 +315,7 @@ const enviarMensagem = async (e) => {
             </div>
 
             {/* 🔹 Formulário de Envio */}
-            <form onSubmit={enviarMensagem} className="mt-4 flex">
+            <form onSubmit={enviarMensagem} className="message-form">
                 <input 
                     type="text" 
                     className="w-full p-2 border rounded-l-md" 
