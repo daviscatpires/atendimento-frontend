@@ -147,14 +147,15 @@ const Dashboard = () => {
           <h4 className="card-subtitle">📂 Atendimentos Abertos</h4>
           <div className="open-appointments-container">
             {dados?.atendimentosAbertosDetalhes?.length > 0 ? (
-              dados.atendimentosAbertosDetalhes.map((atendimento) => (
-                <a key={atendimento._id} href={`/atendimento/${atendimento._id}`} className="open-appointment-card">
-                  <div className="appointment-info">
-                    <strong>🟢 {atendimento.cliente?.nome || "Cliente Desconhecido"}</strong>
-                    <p>📅 {new Date(atendimento.inicioAtendimento).toLocaleString()}</p>
-                  </div>
-                  <button className="open-appointment-button">Responder 🔗</button>
-                </a>
+              dados.atendimentosAbertosDetalhes.map((conversa) => (
+              <a key={conversa._id} href={`/chat?atendimentoId=${conversa._id}`} className="open-appointment-card">
+                <div className="appointment-info">
+                  <strong>🔴 {conversa.cliente?.nome || "Cliente Desconhecido"}</strong>
+                  <p>📅 {new Date(conversa.inicioAtendimento).toLocaleString()}</p>
+                </div>
+                <button className="open-appointment-button">Responder 🔗</button>
+              </a>
+
               ))
             ) : (
               <p className="no-open-appointments">✅ Nenhum atendimento aberto no momento.</p>
@@ -188,13 +189,14 @@ const Dashboard = () => {
           <div className="open-appointments-container">
             {dados?.conversasNaoRespondidasDetalhes?.length > 0 ? (
               dados.conversasNaoRespondidasDetalhes.map((conversa) => (
-                <a key={conversa._id} href={`/atendimento/${conversa._id}`} className="open-appointment-card">
-                  <div className="appointment-info">
-                    <strong>🔴 {conversa.cliente?.nome || "Cliente Desconhecido"}</strong>
-                    <p>📅 {new Date(conversa.ultimaMensagem?.timestamp).toLocaleString()}</p>
-                  </div>
-                  <button className="open-appointment-button">Responder 🔗</button>
-                </a>
+              <a key={conversa._id} href={`/chat?atendimentoId=${conversa._id}`} className="open-appointment-card">
+                <div className="appointment-info">
+                  <strong>🔴 {conversa.cliente?.nome || "Cliente Desconhecido"}</strong>
+                  <p>📅 {new Date(conversa.ultimaMensagem?.timestamp).toLocaleString()}</p>
+                </div>
+                <button className="open-appointment-button">Responder 🔗</button>
+              </a>
+
               ))
             ) : (
               <p className="no-open-appointments">✅ Nenhuma conversa não respondida no momento.</p>

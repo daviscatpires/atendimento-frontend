@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../api';
 import './Chat.css';
+import { useSearchParams } from "react-router-dom";
+
 
 function Chat() {
   const [mensagens, setMensagens] = useState([]);
@@ -17,6 +19,9 @@ function Chat() {
   const [atendentes, setAtendentes] = useState([]);
   const [showRedirectModal, setShowRedirectModal] = useState(false);
   const [selectedAtendente, setSelectedAtendente] = useState(null);
+  const [searchParams] = useSearchParams();
+  const atendimentoId = searchParams.get("atendimentoId");
+  
   // ✅ Buscar usuário logado
   useEffect(() => {
     const fetchUser = async () => {
@@ -37,24 +42,43 @@ function Chat() {
     fetchUser();
   }, []);
 
+  useEffect(() => {
+    if (atendimentoId && atendimentos.length > 0) {
+      const atendimentoSelecionado = atendimentos.find(at => at._id === atendimentoId);
+      if (atendimentoSelecionado) {
+        handleSelecionarAtendimento(atendimentoSelecionado);
+      } else {
+        console.warn("⚠️ Atendimento não encontrado na lista!");
+      }
+    }
+  }, [atendimentoId, atendimentos]);
+  
+
   // ✅ Buscar atendimentos e ordenar por última atividade
   useEffect(() => {
     const fetchAtendimentos = async () => {
       try {
         const res = await api.get('/atendimentos');
-        
-        // 🔍 Ordena atendimentos pelo tempo da última mensagem (do mais recente para o mais antigo)
-        const atendimentosOrdenados = res.data.sort((a, b) => {
-          const ultimoMsgA = a.messages.length > 0 ? new Date(a.messages[a.messages.length - 1].timestamp) : new Date(a.inicioAtendimento);
-          const ultimoMsgB = b.messages.length > 0 ? new Date(b.messages[b.messages.length - 1].timestamp) : new Date(b.inicioAtendimento);
-          return ultimoMsgB - ultimoMsgA; 
+    
+        // 🔍 Ordena atendimentos pelo tempo da última mensagem
+        const atendimentosOrdenados = res.data.map(atendimento => ({
+          ...atendimento,
+          inicioAtendimento: new Date(atendimento.inicioAtendimento), // Converte para objeto Date
+          ultimaMensagem: atendimento.messages.length > 0
+            ? { ...atendimento.messages[atendimento.messages.length - 1], timestamp: new Date(atendimento.messages[atendimento.messages.length - 1].timestamp) }
+            : null,
+        })).sort((a, b) => {
+          const ultimoMsgA = a.ultimaMensagem ? a.ultimaMensagem.timestamp : a.inicioAtendimento;
+          const ultimoMsgB = b.ultimaMensagem ? b.ultimaMensagem.timestamp : b.inicioAtendimento;
+          return ultimoMsgB - ultimoMsgA;
         });
-
+    
         setAtendimentos(atendimentosOrdenados);
       } catch (err) {
         console.error('❌ Erro ao buscar atendimentos:', err);
       }
     };
+    
 
     fetchAtendimentos();
     const interval = setInterval(fetchAtendimentos, 5000); // Atualiza a cada 5s
